@@ -3,6 +3,8 @@
 name: Analyze with ShiftLeft Inspect
 
 on:
+  schedule:
+    - cron: "0 * * * *"
   push:
     branches:
       - master
@@ -28,7 +30,9 @@ jobs:
         curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
 
     - name: Analyze with Inspect
-      run: ${GITHUB_WORKSPACE}/sl analyze --no-diagnostic --force --version-id 1 --app ShiftLeftGo --tag branch=${GITHUB_REF} --go .
+      run: |
+        ${GITHUB_WORKSPACE}/sl --version
+        ${GITHUB_WORKSPACE}/sl analyze --no-diagnostic --force --version-id 1 --app ShiftLeftGo --tag branch=${GITHUB_REF} --go .
       env:
         SHIFTLEFT_ORG_ID: ${{ secrets.SHIFTLEFT_ORG_ID }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
