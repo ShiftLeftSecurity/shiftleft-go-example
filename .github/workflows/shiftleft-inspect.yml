@@ -32,7 +32,7 @@ jobs:
     - name: Analyze with Inspect
       run: |
         ${GITHUB_WORKSPACE}/sl --version
-        ${GITHUB_WORKSPACE}/sl analyze --no-diagnostic --force --version-id 1 --app ShiftLeftGo --tag branch=${GITHUB_REF} --go .
+        ${GITHUB_WORKSPACE}/sl analyze --no-diagnostic --force --version-id 1 --app ShiftLeftGo --tag branch=${GITHUB_REF} --go $(pwd)
       env:
         SHIFTLEFT_ORG_ID: ${{ secrets.SHIFTLEFT_ORG_ID }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
