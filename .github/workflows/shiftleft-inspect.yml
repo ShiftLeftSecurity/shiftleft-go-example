@@ -32,11 +32,10 @@ jobs:
     - name: Analyze with Inspect
       run: |
         ${GITHUB_WORKSPACE}/sl --version
-        ${GITHUB_WORKSPACE}/sl analyze --verbose --no-diagnostic --force --version-id 1 --app ShiftLeftGo --tag branch=${GITHUB_REF} --go $(pwd)
+        ${GITHUB_WORKSPACE}/sl analyze --verbose --no-diagnostic --force --version-id 1 --app ShiftLeftGo --tag branch=${GITHUB_REF} --go --cpg $(pwd)
       env:
         SHIFTLEFT_ORG_ID: ${{ secrets.SHIFTLEFT_ORG_ID }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-        SHIFTLEFT_API_TOKEN: ${{ secrets.SHIFTLEFT_API_TOKEN }}
     - name: Create status check
       run: |
         URL="https://www.shiftleft.io/violationlist/ShiftLeftGo?apps=ShiftLeftGo&isApp=1"
