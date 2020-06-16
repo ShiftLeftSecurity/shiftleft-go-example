@@ -32,14 +32,14 @@ jobs:
     - name: Analyze with Inspect
       run: |
         ${GITHUB_WORKSPACE}/sl --version
-        ${GITHUB_WORKSPACE}/sl analyze --verbose --no-diagnostic --force --version-id 1 --app ShiftLeftGo --tag branch=${GITHUB_REF} --go --cpg $(pwd)
+        ${GITHUB_WORKSPACE}/sl analyze --no-diagnostic --force --version-id 1 --app ShiftLeftHSLGo --tag branch=${GITHUB_REF} --go --cpg $(pwd)
       env:
         SHIFTLEFT_ORG_ID: ${{ secrets.SHIFTLEFT_ORG_ID }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
     - name: Create status check
       run: |
-        URL="https://www.shiftleft.io/violationlist/ShiftLeftGo?apps=ShiftLeftGo&isApp=1"
+        URL="https://www.shiftleft.io/violationlist/ShiftLeftHSLGo?apps=ShiftLeftHSLGo&isApp=1"
         GH_CHECK_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/check-runs"
-        curl -XPOST $GH_CHECK_URL -H "Authorization: Token ${GITHUB_TOKEN}" -H "accept: application/vnd.github.antiope-preview+json" -H "Content-Type: application/json" -d "{\"name\": \"ShiftLeft Inspect\", \"head_sha\": \"${GITHUB_REF}\", \"external_id\": \"ShiftLeftGo\", \"details_url\": \"${URL}\", \"status\": \"completed\", \"conclusion\": \"action_required\", \"output\": {\"title\": \"ShiftLeft Inspect Findings\", \"summary\": \"Visit ${URL} for the findings\"}}"
+        curl -XPOST $GH_CHECK_URL -H "Authorization: Token ${GITHUB_TOKEN}" -H "accept: application/vnd.github.antiope-preview+json" -H "Content-Type: application/json" -d "{\"name\": \"ShiftLeft Inspect\", \"head_sha\": \"${GITHUB_REF}\", \"external_id\": \"ShiftLeftHSLGo\", \"details_url\": \"${URL}\", \"status\": \"completed\", \"conclusion\": \"action_required\", \"output\": {\"title\": \"ShiftLeft Inspect Findings\", \"summary\": \"Visit ${URL} for the findings\"}}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
