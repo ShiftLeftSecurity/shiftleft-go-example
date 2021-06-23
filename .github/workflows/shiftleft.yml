@@ -4,6 +4,7 @@ name: ShiftLeft
 
 on:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   NextGen-Static-Analysis:
@@ -19,16 +20,13 @@ jobs:
     - name: Download ShiftLeft CLI
       run: |
         curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
-
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
     - name: NextGen Static Analysis
       run: |
-        ${GITHUB_WORKSPACE}/sl analyze --app ShiftLeftHSLGo14 --tag branch=${{ github.head_ref }} --go --cpg $(pwd)
+        ${GITHUB_WORKSPACE}/sl --version
+        ${GITHUB_WORKSPACE}/sl analyze --wait --app ShiftLeftHSLGo14 --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --go --cpg $(pwd)
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-    - name: Create status check
-      run: |
-        URL="https://www.shiftleft.io/violationlist/ShiftLeftHSLGo14?apps=ShiftLeftHSLGo14&isApp=1"
-        GH_CHECK_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/check-runs"
-        curl -XPOST $GH_CHECK_URL -H "Authorization: Token ${GITHUB_TOKEN}" -H "accept: application/vnd.github.antiope-preview+json" -H "Content-Type: application/json" -d "{\"name\": \"ShiftLeft NextGen Static Analysis\", \"head_sha\": \"${GITHUB_REF}\", \"external_id\": \"ShiftLeftHSLGo14\", \"details_url\": \"${URL}\", \"status\": \"completed\", \"conclusion\": \"action_required\", \"output\": {\"title\": \"ShiftLeft NextGen Static Analysis Findings\", \"summary\": \"Visit ${URL} for the findings\"}}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
